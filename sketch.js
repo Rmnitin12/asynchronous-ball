@@ -7,9 +7,10 @@ function setup(){
     ball = createSprite(250,250,10,10);
     ball.shapeColor = "red";
     database = firebase.database()
-    console.log(database)
+  
     var location = database.ref("ball/position")
-    location.on("value",readposition)
+    //First argument of the listener function(on) must be a valid event type = "value", "child_added", "child_removed", "child_changed", or "child_moved".
+    location.on("value",readposition,errormessage)
 }
 
 function draw(){
@@ -29,14 +30,23 @@ function draw(){
     drawSprites();
 }
 
-function changePosition(x,y){
-    ball.x = ball.x + x;
-    ball.y = ball.y + y;
+function changePosition(a,b){
+    database.ref("ball/position").update({
+        x:position.x+a,
+        y:position.y+b
+
+    })
+
 }
 
 
 function readposition (data){
          position = data.val()
-         console.log(position)
+       ball.x = position.x
+       ball.y = position.y
          
+}
+
+function errormessage (){
+    console.log("Data not received from database.")
 }
